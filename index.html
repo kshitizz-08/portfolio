@@ -495,7 +495,7 @@
       display: grid;
       grid-template-columns: minmax(0, 3fr) minmax(0, 2.2fr);
       gap: 32px;
-      padding: 36px 0 28px;
+      padding: 36px 0 60px;
       align-items: center;
     }
 
@@ -781,6 +781,13 @@
     /* Sections */
     section {
       margin-top: 40px;
+      scroll-margin-top: 80px; /* Account for sticky header */
+    }
+
+    /* First section after hero needs extra spacing */
+    #about {
+      margin-top: 60px;
+      padding-top: 20px;
     }
 
     .section-header {
@@ -968,31 +975,28 @@
       gap: 4px;
     }
 
-    /* Scroll reveal - Apple-like smooth animations */
-    .reveal {
+
+    /* Scroll animations - Left to Right / Right to Left */
+    .slide-in-left {
       opacity: 0;
-      transform: translateY(40px) scale(0.98);
-      transition: opacity 900ms cubic-bezier(0.16, 1, 0.3, 1), 
-                  transform 900ms cubic-bezier(0.16, 1, 0.3, 1);
+      transform: translateX(-80px);
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
       will-change: opacity, transform;
     }
 
-    .reveal.visible {
-      opacity: 1;
-      transform: translateY(0) scale(1);
+    .slide-in-right {
+      opacity: 0;
+      transform: translateX(80px);
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: opacity, transform;
     }
 
-    .reveal[data-delay="1"] {
-      transition-delay: 100ms;
-    }
-    .reveal[data-delay="2"] {
-      transition-delay: 200ms;
-    }
-    .reveal[data-delay="3"] {
-      transition-delay: 300ms;
-    }
-    .reveal[data-delay="4"] {
-      transition-delay: 400ms;
+    .slide-in-left.visible,
+    .slide-in-right.visible {
+      opacity: 1;
+      transform: translateX(0);
     }
 
     /* Parallax effect for hero */
@@ -1165,7 +1169,7 @@
         </div>
       </div>
 
-      <aside class="hero-card reveal" data-delay="2">
+      <aside class="hero-card">
         <div class="hero-orbit">
           <div class="orbit-ring one">
             <div class="orbit-dot"></div>
@@ -1203,7 +1207,7 @@
     </section>
 
     <!-- About -->
-    <section id="about" class="reveal">
+    <section id="about" class="slide-in-left">
       <div class="section-header">
         <div>
           <div class="section-kicker">About</div>
@@ -1226,7 +1230,7 @@
     </section>
 
     <!-- Skills -->
-    <section id="skills" class="reveal" data-delay="1">
+    <section id="skills" class="slide-in-right">
       <div class="section-header">
         <div>
           <div class="section-kicker">Skills</div>
@@ -1293,7 +1297,7 @@
     </section>
 
     <!-- Projects -->
-    <section id="projects" class="reveal" data-delay="2">
+    <section id="projects" class="slide-in-left">
       <div class="section-header">
         <div>
           <div class="section-kicker">Projects</div>
@@ -1434,7 +1438,7 @@
     </section>
 
     <!-- Experience & Education -->
-    <section id="experience" class="reveal" data-delay="3">
+    <section id="experience" class="slide-in-right">
       <div class="section-header">
         <div>
           <div class="section-kicker">Experience</div>
@@ -1499,7 +1503,7 @@
     </section>
 
     <!-- Academic Background -->
-    <section class="reveal" data-delay="1">
+    <section class="slide-in-left">
       <div class="section-header">
         <div>
           <div class="section-kicker">Academic Background</div>
@@ -1536,7 +1540,7 @@
     </section>
 
     <!-- Contact -->
-    <section id="contact" class="reveal" data-delay="2">
+    <section id="contact" class="slide-in-right">
       <div class="section-header">
         <div>
           <div class="section-kicker">Contact</div>
@@ -1624,24 +1628,25 @@
     // Current year
     document.getElementById("year").textContent = new Date().getFullYear();
 
-    // Smooth scroll reveal with Apple-like animations
-    const revealEls = document.querySelectorAll(".reveal");
-    const observer = new IntersectionObserver(
+    // Scroll animations - Left to Right / Right to Left
+    const slideElements = document.querySelectorAll('.slide-in-left, .slide-in-right');
+    const slideObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-            observer.unobserve(entry.target);
+            entry.target.classList.add('visible');
+            slideObserver.unobserve(entry.target);
           }
         });
       },
       {
-        threshold: 0.1,
+        threshold: 0.15,
         rootMargin: '0px 0px -50px 0px'
       }
     );
 
-    revealEls.forEach((el) => observer.observe(el));
+    slideElements.forEach((el) => slideObserver.observe(el));
+
 
     // Parallax effect for hero section
     const hero = document.querySelector('.hero');
